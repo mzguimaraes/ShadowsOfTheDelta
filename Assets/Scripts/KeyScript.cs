@@ -28,9 +28,8 @@ public class KeyScript : MonoBehaviour {
 
 
 	// Setting up AudioSources to be triggered when players perform certain actions
-	//public AudioSource KeyPickUp;
-	//public AudioSource DoorStillLocked;
-	//public AudioSource DoorOpening;
+	public AudioSource KeySFX;
+	public AudioClip KeyPickup;
 
 
 	void Start () {
@@ -52,12 +51,12 @@ public class KeyScript : MonoBehaviour {
 
 		// Code that allows Player 1 or Player 2 to pick up Key1.  The input buttons and distance to key are very subject to change.
 		if (((Key1.transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift)) {
-			//KeyPickUp.Play ();
+			KeySFX.PlayOneShot (KeyPickup);
 			Player1HasKey1 = true;
 			Debug.Log ("Player1HasKey1");
 
 		} else if (((Key1.transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.Space)) {
-			//KeyPickUp.Play ();
+			KeySFX.PlayOneShot (KeyPickup);
 			Player2HasKey1 = true;
 			Debug.Log ("Player2HasKey1");
 //		} else {

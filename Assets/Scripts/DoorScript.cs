@@ -23,6 +23,9 @@ public class DoorScript : MonoBehaviour {
 	// public KeyScript Key2;
 	// public KeyScript Key3;
 
+	public AudioSource DoorSFX;
+	public AudioClip DoorOpening;
+	public AudioClip DoorStillLocked;
 
 	void Start () {
 	
@@ -37,13 +40,13 @@ public class DoorScript : MonoBehaviour {
 
 		// Code that allows Player 1 or Player 2 to Unlock Door 1 after picking up Key 1
 		if (((Door1.transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && Key1.Player1HasKey1 == true) {
-			//DoorOpening.Play ();
+			DoorSFX.PlayOneShot (DoorOpening);
 			Door1IsUnlocked = true;
 			Debug.Log ("Player 1 Unlocked Door 1");
 
 		} else if (((Door1.transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.Space) && Key1.Player2HasKey1 == true) {
 
-			//DoorOpening.Play ();
+			DoorSFX.PlayOneShot (DoorOpening);
 			Door1IsUnlocked = true;
 			Debug.Log ("Player 2 Unlocked Door 2");
 
@@ -51,7 +54,7 @@ public class DoorScript : MonoBehaviour {
 
 		if (((Door1.transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && Key1.Player1HasKey1 == false){
 
-			//DoorStillLocked.Play ();
+			DoorSFX.PlayOneShot (DoorStillLocked);
 			Debug.Log ("Door is still locked");
 		}
 
