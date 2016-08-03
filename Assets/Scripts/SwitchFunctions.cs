@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KeyScript : MonoBehaviour {
+public class SwitchFunctions : MonoBehaviour {
 
 	// Creating public transform variables for both players. These will be used for the key pickup and door unlock codes.
 	public Transform Player1Pos;
 	public Transform Player2Pos;
-
-
-	// Creating public instance of one key. Left code for a second and third keys.  Uncomment those lines if they're needed.
-	public KeyScript Switch;
 
 	public bool SwitchIsOn = false;
 
@@ -22,7 +18,6 @@ public class KeyScript : MonoBehaviour {
 
 	void Start () {
 		
-		SwitchIsOn = false;
 
 	}
 	
@@ -30,26 +25,27 @@ public class KeyScript : MonoBehaviour {
 	void Update () {
 
 		// Code that allows Player 1 or Player 2 to pick up Key1.  The input buttons and distance to key are very subject to change.
-		if (((Switch.transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn = false)) {
+		if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn == false)) {
+
 			SwitchSFX.PlayOneShot (KeyPickup);
 			SwitchIsOn = true;
-			Debug.Log ("Switch is On");
+			Debug.Log (SwitchIsOn);
 
-		} else if (((Switch.transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn = true)) {
+		} else if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn == true)) {
 
 			SwitchSFX.PlayOneShot (KeyPickup);
 			SwitchIsOn = false;
-			Debug.Log ("Switch is Off");
+			Debug.Log (SwitchIsOn);
 		}
 
 
-		if (((Switch.transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.E) && (SwitchIsOn = false)) {
+		if (((transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.E) && (SwitchIsOn = false)) {
 
 			SwitchSFX.PlayOneShot (KeyPickup);
 			SwitchIsOn = true;
 			Debug.Log ("Switch is On");
 
-		} else if (((Switch.transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.E) && (SwitchIsOn = true)) {
+		} else if (((transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.E) && (SwitchIsOn = true)) {
 
 			SwitchSFX.PlayOneShot (KeyPickup);
 			SwitchIsOn = false;
