@@ -31,6 +31,9 @@ public class Door : MonoBehaviour {
 	}
 
 	void Update () {
+		//Note from AGK: Rather than checking every frame is Switch.SwitchIsOn is true, you might consider a
+		//public function that the Switch itself calls? Depends on the setup but that might be easier.
+		
 
 		// Code that allows Player 1 or Player 2 to Unlock Door 1 after picking up Key 1
 		if (Switch.SwitchIsOn == true) {
