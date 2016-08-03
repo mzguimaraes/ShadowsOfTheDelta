@@ -7,20 +7,44 @@ using UnityEngine;
 using System.Collections;
 
 public class GuardBot_AI : MonoBehaviour {
+	//TODO: change movement system to use physics
 
 	public PatrolPath patrol;
 	public float speed = 2f;
+	public float playerFollowTime = 5f;
 
+	//for finding player(s)
+	private bool followingPath = true;
+	private float playerFollowCountDown;
+	private Vector3 lastKnownPosition;
+	private Vector3 directionLastKnown;
+
+	//patrolMove()
 	private PatrolPathNode destination;
+
+	//checkDestinationAgainstPatrol()
 	private int destinationIndex = 1; //index of destination in patrol.path
 	private bool isPatrollingBackwards = false; //flips when bot reaches end of patrol path and heads back
 
+
+	private Collider2D spotlight;
+
+	// Use this for initialization
+	void Start () {
+		transform.position = patrol.path[0].transform.position;
+		destination = patrol.path[1];
+		spotlight = GetComponent<Collider2D>();
+		playerFollowCountDown = playerFollowTime;
+		lastKnownPosition = Vector3.zero;
+	}
+
 	//patrol
-	void patrolMove() {
+	void patrolMove(Vector3 target) {
 		//call in Update()
 		//moves the bot incrementally towards the next node in patrol
+		//moves through walls so don't cross any with patrol paths
 
-		Vector3 moveVector = destination.transform.position - transform.position; //vector between
+		Vector3 moveVector = target - transform.position; //vector between
 		moveVector.Normalize();
 		moveVector = moveVector * speed * Time.deltaTime; //scale
 
@@ -28,9 +52,8 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//check destination, swap if necessary
-	void updateDestination() {
+	void checkDestinationAgainstPatrol() {
 		//TODO: make this clean 
-		//TODO: will probably break on patrolPath of size 1 or less
 		if ( (transform.position - destination.transform.position).magnitude <= 0.1f ) {
 			//reached destination node, set next one
 			if (!isPatrollingBackwards) { //moving forwards through path
@@ -46,10 +69,10 @@ public class GuardBot_AI : MonoBehaviour {
 						destination = nextNode;
 						destinationIndex--;
 					}
-					else { //only one node in this patrol
-						//stay where we are (this isn't desired and will probably break,
-						//but i'm not testing this because deadlines)
-					}
+//					else { //only one node in this patrol
+//						//stay where we are (this isn't desired and will probably break,
+//						//but i'm not testing this because deadlines)
+//					}
 				}
 			}
 			else { //moving backwards through path -- same logic as above but reversed
@@ -71,21 +94,50 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//check for player
-	//shoot
-	//follow/search for player
-
-
-
-	// Use this for initialization
-	void Start () {
-		transform.position = patrol.path[0].transform.position;
-		destination = patrol.path[1];
+	void OnTriggerEnter2D(Collider2D other) {
+		//TODO: make this work off the childed light beam's collider
+		//TODO: fix movement direction
+		Debug.Log("collision");
+		if (other.tag == "Player") {
+			Debug.Log("found player");
+			followingPath = false;
+			playerFollowCountDown = playerFollowTime;
+			lastKnownPosition = other.transform.position;
+			directionLastKnown = (lastKnownPosition - transform.position).normalized;
+		}
 	}
+
+	//shoot
+	void OnTriggerStay2D(Collider2D other) {
+		if (other.tag == "Player") {
+			
+		}
+	}
+
+	//follow/search for player
+	void checkDestinationAgainstPlayer() {
+		
+	}
+
+
+
+
 	
 	// Update is called once per frame
 	void Update () {
-		patrolMove();
-		updateDestination();
-	
+		if (followingPath){ //move along patrol
+			patrolMove(destination.transform.position);
+			checkDestinationAgainstPatrol();
+		}
+		else { //move to player
+			playerFollowCountDown -= Time.deltaTime;
+
+
+			patrolMove(transform.position + directionLastKnown);
+
+			if (playerFollowCountDown <= 0f) {
+				followingPath = true;
+			}
+		}
 	}
 }
