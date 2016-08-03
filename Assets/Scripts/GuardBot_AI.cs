@@ -12,6 +12,7 @@ public class GuardBot_AI : MonoBehaviour {
 	public PatrolPath patrol;
 	public float speed = 2f;
 	public float playerFollowTime = 5f;
+	public GameObject bullet;
 
 	//for finding player(s)
 	private bool followingPath = true;
@@ -97,9 +98,7 @@ public class GuardBot_AI : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) {
 		//TODO: make this work off the childed light beam's collider
 		//TODO: fix movement direction
-		Debug.Log("collision");
 		if (other.tag == "Player") {
-			Debug.Log("found player");
 			followingPath = false;
 			playerFollowCountDown = playerFollowTime;
 			lastKnownPosition = other.transform.position;
@@ -109,8 +108,9 @@ public class GuardBot_AI : MonoBehaviour {
 
 	//shoot
 	void OnTriggerStay2D(Collider2D other) {
+		//TODO: make bullet rotate toward player (and change bullet sprite to be oblong)
 		if (other.tag == "Player") {
-			
+			Instantiate(bullet, transform.position, Quaternion.identity);
 		}
 	}
 
