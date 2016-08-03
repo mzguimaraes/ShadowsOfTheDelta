@@ -5,7 +5,8 @@ public class Bullet : MonoBehaviour {
 	//TODO: make this do damage
 	//TODO: make this work
 
-	public float speed = 50f;
+	public float speed = 5f;
+	public float timeToLive = 3f;
 
 	private Rigidbody2D rb2d;
 
@@ -23,6 +24,15 @@ public class Bullet : MonoBehaviour {
 			Destroy(this.gameObject);
 		}
 		else if (other.tag != "Enemy") {
+			Destroy(this.gameObject);
+		}
+	}
+
+	void Update() {
+		if (timeToLive > 0f) {
+			timeToLive -= Time.deltaTime;
+		}
+		else {
 			Destroy(this.gameObject);
 		}
 	}

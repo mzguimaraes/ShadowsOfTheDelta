@@ -8,6 +8,8 @@ using System.Collections;
 
 public class GuardBot_AI : MonoBehaviour {
 	//TODO: change movement system to use physics
+	//TODO: field of view 180 degrees ahead
+	//TODO: raycast for vision (break on walls)
 
 	public PatrolPath patrol;
 	public float speed = 2f;
@@ -95,11 +97,10 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//check for player
-	void OnTriggerEnter2D(Collider2D other) {
+	void OnTriggerExit2D(Collider2D other) {
 		//TODO: make this work off the childed light beam's collider
 		//TODO: fix movement direction
 		if (other.tag == "Player") {
-			followingPath = false;
 			playerFollowCountDown = playerFollowTime;
 			lastKnownPosition = other.transform.position;
 			directionLastKnown = (lastKnownPosition - transform.position).normalized;
@@ -115,8 +116,13 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//follow/search for player
-	void checkDestinationAgainstPlayer() {
-		
+	void OnTriggerEnter2D(Collider2D other) {
+		if (other.tag == "Player") {
+			followingPath = false;
+		}
+		else if (other.tag == "Map") {
+			//destination *= -1*/;
+		}
 	}
 
 
