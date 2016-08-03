@@ -5,7 +5,7 @@ using System.Collections;
 
 public class PlayerMovement: MonoBehaviour {
 
-    public float moveSpeed = 5.0f;
+    public float moveSpeed = 50f;
 
 	public string horizontalAxisName = "Horizontal";
 	public string verticalAxisName = "Vertical";
@@ -28,10 +28,12 @@ public class PlayerMovement: MonoBehaviour {
 		if(moveVector.magnitude > 1f){
 			moveVector.Normalize ();
 		}
+
+
 	}
 
     void FixedUpdate() {
-		myRigidbody.velocity = moveVector * Time.deltaTime;
+		myRigidbody.velocity = moveVector * moveSpeed * Time.deltaTime * 10f;
     }
 
 }
