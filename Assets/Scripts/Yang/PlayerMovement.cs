@@ -33,7 +33,7 @@ public class PlayerMovement: MonoBehaviour {
 	}
 
     void FixedUpdate() {
-		myRigidbody.velocity = moveVector * moveSpeed * Time.deltaTime * 10f;
+		myRigidbody.velocity = moveVector * moveSpeed * Time.deltaTime * 10f; // <-- Secret 10f multiplier? Why not just change moveSpeed?
     }
 
 }
