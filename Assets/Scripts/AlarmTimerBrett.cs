@@ -7,7 +7,8 @@ public class AlarmTimerBrett : MonoBehaviour {
 
 
 	public Text timeRemainingText;
-	public float timeLeft;
+	public static float timeLeft = 999;
+
 
 
 	// Use this for initialization
