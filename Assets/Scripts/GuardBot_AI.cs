@@ -10,7 +10,7 @@ public class GuardBot_AI : MonoBehaviour {
 	//TODO: change movement system to use physics
 	//TODO: field of view 180 degrees ahead
 	//TODO: raycast for vision (break on walls)
-	//TODO: make guard faster when chasing player
+	//TODO: flip correctly
 
 	public PatrolPath patrol;
 	public float patrolSpeed = 2f;
@@ -43,12 +43,20 @@ public class GuardBot_AI : MonoBehaviour {
 	void patrolMove(Vector3 target, float speed) {
 		//call in Update()
 		//moves the bot incrementally towards the next node in patrol
-		//moves through walls so don't cross any with patrol paths
 
 		Vector3 moveVector = target - transform.position; //vector between
 		moveVector.Normalize();
 		moveVector = moveVector * speed * Time.deltaTime; //scale
 
+		//check for wall in way
+		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, moveVector, moveVector.magnitude);
+		if (rch2d.collider != null) {
+			if (rch2d.collider.tag == "Map") {
+				//move around wall TODO
+			}
+
+		}
+		//change to velocity TODO
 		transform.position += moveVector;
 	}
 
@@ -135,10 +143,10 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//caught player
-	void OnCollisionEnter2D(Collider2D other) {
-		if (other.tag == "Player") {
+	void OnCollisionEnter2D(Collision2D other) {
+		if (other.collider.tag == "Player") {
 			//TODO: change this to use whatever death mechanic Yang figures out
-			other.gameObject.SetActive(false);
+			other.collider.gameObject.SetActive(false);
 		}
 	}
 
