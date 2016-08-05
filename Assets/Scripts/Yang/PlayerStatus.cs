@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
-
 public class PlayerStatus : MonoBehaviour {
 
 	// the deadSprite which will replace the current sprite if the player is killed
 	public Sprite deadSprite;
-	// set this to the object you assign the PlayerDeathHandler script on 
-	public GameObject sceneController;
+	// set this to the object you assign the DeathHandler script on 
+	public GameObject deathHandler;
 	// the behaviour of the player if she dies,
 	// GOTHOUGH: the player who is still alive will not collide with the dead player
 	// IMMOVABLE: the player will collide with the dead player, which is immovable
@@ -35,7 +33,7 @@ public class PlayerStatus : MonoBehaviour {
 		}
 
 		// we will abort this script if no sceneController is assigned
-		if(sceneController == null){
+		if(deathHandler == null){
 			Debug.Log ("KillPlayer.Kill(): no sceneController is assigned.");
 			return;
 		}
@@ -76,6 +74,6 @@ public class PlayerStatus : MonoBehaviour {
 
 
 		// tell PlayerDeathHandler that a player has died
-		sceneController.GetComponent<DeathHandler> ().PlayerDied ();
+		deathHandler.GetComponent<DeathHandler> ().PlayerDied ();
 	}
 }
