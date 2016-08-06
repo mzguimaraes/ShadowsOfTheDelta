@@ -16,6 +16,11 @@ public class ExitDoorBrett : MonoBehaviour {
 
 	public Text playerOneInstruction; // This is the text that tells player one which button to press to escape the level.
 	public Text playerTwoInstruction; // This is the text that tells player two which button to press to escape the level.
+	public GameObject playerOnePanel; // This is the panel behind the player one help box.
+	public GameObject playerTwoPanel; // This is the panel behind the player two help box.
+	public GameObject breakoutPanel; // This is the panel behind the breakout text box!
+
+
 
 	public float newCounterTime = 30; // This is the counter time that is assigned when one player escapes the level.
 
@@ -27,7 +32,7 @@ public class ExitDoorBrett : MonoBehaviour {
 	public AudioSource ExitDoorSFX;
 	public AudioClip exitDoorOpenSFX;
 
-	public float textTimeEnd = 5;  // This variable tracks how long it takes for the "Completed Level Screen" to load.
+	float textTimeEnd = 1000;  // This variable tracks how long it takes for the "Completed Level Screen" to load.
 
 
 
@@ -35,7 +40,8 @@ public class ExitDoorBrett : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+		breakoutPanel.SetActive (false);
+
 	}
 
 	void EndGame () {
@@ -47,16 +53,28 @@ public class ExitDoorBrett : MonoBehaviour {
 			AlarmTimerBrett.timeLeft = newCounterTime; // Set the time left variable to the value of newCounterTime, which is thirty seconds.
 			hasPlayerEscaped = true;
 		} else {
-			textTimeEnd -= Time.deltaTime; // Countdown from the timer.
-			playerEscapedText.text = "Breakout!";  // Display "Breakout" in the center of the screen.
+			//playerEscapedText.text = "Breakout!";  // Display "Breakout" in the center of the screen.
+			textTimeEnd = 5;
+			breakoutPanel.SetActive(true);
+
 		}
 
 	}
 
+
+
 	// Update is called once per frame
 	void Update () {
-		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f)  { // If player one is within a few feet of the exit door, show him the following text.
+		playerOneInstruction.text = ""; // If the player is not near any door, this text will not come up at all.
+		playerTwoInstruction.text = ""; // If the player is not near any door, this text will not come up at all.
+		playerOnePanel.SetActive(false);
+		playerTwoPanel.SetActive(false);
+		textTimeEnd -= Time.deltaTime; // Countdown from the timer.
+
+
+		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f && playerOne.activeInHierarchy)  { // If player one is within a few feet of the exit door, show him the following text.
 			playerOneInstruction.text = "Press [RIGHT SHIFT] to escape!";
+			playerOnePanel.SetActive (true);
 			if (Input.GetKeyDown(KeyCode.RightShift)) { // If he presses right shift,
 				playerOne.SetActive(false); // Disable his character from the scene.
 				EndGame();
@@ -64,8 +82,9 @@ public class ExitDoorBrett : MonoBehaviour {
 				
 		}
 
-		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f)  { // If player two is within a few feet of the exit door, show him the following text.
+		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f && playerTwo.activeInHierarchy)  { // If player two is within a few feet of the exit door, show him the following text.
 			playerTwoInstruction.text = "Press [SPACE] to escape!";
+			playerTwoPanel.SetActive (true);
 			if (Input.GetKeyDown(KeyCode.Space)) { // If he presses space,
 				playerTwo.SetActive(false); // Disable his character from the scene.
 				EndGame();
