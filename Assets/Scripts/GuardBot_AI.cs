@@ -9,14 +9,11 @@ using System.Collections;
 public class GuardBot_AI : MonoBehaviour {
 	//TODO: change movement system to use physics
 	//TODO: field of view 180 degrees ahead
-	//TODO: raycast for vision (break on walls)
-	//TODO: flip correctly
 
 	public PatrolPath patrol;
 	public float patrolSpeed = 2f;
 	public float chaseSpeed = 5f;
 	public float playerFollowTime = 5f;
-	public GameObject bullet;
 
 	//for finding player(s)
 	private bool followingPath = true;
@@ -77,6 +74,8 @@ public class GuardBot_AI : MonoBehaviour {
 						PatrolPathNode nextNode = patrol.path[destinationIndex - 1];
 						destination = nextNode;
 						destinationIndex--;
+						gameObject.GetComponent<SpriteRenderer>().flipX ^= true; //bitwise OR--flips value
+
 					}
 //					else { //only one node in this patrol
 //						//stay where we are (this isn't desired and will probably break,
@@ -96,6 +95,7 @@ public class GuardBot_AI : MonoBehaviour {
 						PatrolPathNode nextNode = patrol.path[destinationIndex + 1];
 						destination = nextNode;
 						destinationIndex++;
+						gameObject.GetComponent<SpriteRenderer>().flipX ^= true; //bitwise OR--flips value
 					}
 				}
 			}
@@ -103,50 +103,76 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//check for player
-	void OnTriggerExit2D(Collider2D other) {
-		//TODO: make this work off the childed light beam's collider
-		if (other.tag == "Player") {
-			playerFollowCountDown = playerFollowTime;
-			updateLastKnown(other.transform.position);
+//	void OnTriggerExit2D(Collider2D other) {
+//		//TODO: make this work off the childed light beam's collider
+//		if (other.tag == "Player") {
+//			playerFollowCountDown = playerFollowTime;
+//			updateLastKnown(other.transform.position);
+//		}
+//	}
+
+	//replacement for OnTriggerExit2D() using raycasts
+	bool checkVision() {
+		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up); //guards are designed w/ down as up
+		if (rch2d.collider != null) {
+			if (rch2d.collider.tag == "Player") {
+				playerFollowCountDown = playerFollowTime;
+				updateLastKnown(rch2d.collider.transform.position);
+				followingPath = false;
+				return true;
+			}
+			else {
+				Collider2D[] objectsInVision = Physics2D.OverlapCircleAll(transform.position, rch2d.distance);
+				foreach (Collider2D obj in objectsInVision) {
+					if (obj.tag == "Player") {
+						playerFollowCountDown = playerFollowTime;
+						updateLastKnown(rch2d.collider.transform.position);
+						followingPath = false;
+						return true;
+					}
+				}
+			}
 		}
+		return false;
 	}
 
-	//if see player change movement direction
-	void OnTriggerStay2D(Collider2D other) {
-		//TODO: make bullet rotate toward player (and change bullet sprite to be oblong)
-		if (other.tag == "Player") {
-			updateLastKnown(other.transform.position);
+//	//if see player change movement direction
+//	void OnTriggerStay2D(Collider2D other) {
+//		//TODO: make bullet rotate toward player (and change bullet sprite to be oblong)
+//		if (other.tag == "Player") {
+//			updateLastKnown(other.transform.position);
+//
+////			//raycast to see if near player
+////			RaycastHit2D rch2d = Physics2D.Raycast(transform.position,
+////				(other.transform.position - transform.position), 
+////				0.1f);
+////			if (rch2d != null && rch2d.collider.tag == "Player") {
+////				
+////				rch2d.collider.gameObject.SetActive(false);
+////			}
+//
+//
+//			//Instantiate(bullet, transform.position, Quaternion.identity);
+//		}
+//	}
 
-//			//raycast to see if near player
-//			RaycastHit2D rch2d = Physics2D.Raycast(transform.position,
-//				(other.transform.position - transform.position), 
-//				0.1f);
-//			if (rch2d != null && rch2d.collider.tag == "Player") {
-//				
-//				rch2d.collider.gameObject.SetActive(false);
-//			}
+//	//see player
+//	void OnTriggerEnter2D(Collider2D other) {
+//		if (other.tag == "Player") {
+//			followingPath = false;
+//		}
+//		else if (other.tag == "Map") {
+//			//pathfind
+//			//destination *= -1;
+//		}
+//	}
 
 
-			//Instantiate(bullet, transform.position, Quaternion.identity);
-		}
-	}
-
-	//see player
-	void OnTriggerEnter2D(Collider2D other) {
-		if (other.tag == "Player") {
-			followingPath = false;
-		}
-		else if (other.tag == "Map") {
-			//pathfind
-			//destination *= -1;
-		}
-	}
 
 	//caught player
 	void OnCollisionEnter2D(Collision2D other) {
 		if (other.collider.tag == "Player") {
-			//TODO: change this to use whatever death mechanic Yang figures out
-			other.collider.gameObject.SetActive(false);
+			other.gameObject.GetComponent<PlayerStatus>().Kill();
 		}
 	}
 
@@ -155,22 +181,59 @@ public class GuardBot_AI : MonoBehaviour {
 		directionLastKnown = (lastKnownPosition - transform.position).normalized;
 	}
 
+	void rotateForMovement(Vector3 target) {
+		//rotates object in direction of movement
 
-	
+		//get unit vector of direction
+		Vector3 vectorToTarget = target - transform.position;
+		vectorToTarget.Normalize();
+
+		//rotate in that direction
+		transform.up = vectorToTarget;
+	}
+		
+	IEnumerator lookAround() {
+		//looks around in a circle
+		for (float f = 0f; f <= 360f; f += 1) {
+			if (followingPath) break;
+			transform.Rotate(new Vector3(0f, 0f, 1f) * Time.deltaTime );
+			yield return null;
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
+		bool playerInVision = checkVision();
+
 		if (followingPath){ //move along patrol
+			rotateForMovement(destination.transform.position);
 			patrolMove(destination.transform.position, patrolSpeed);
 			checkDestinationAgainstPatrol();
 		}
-		else { //move to player
-			playerFollowCountDown -= Time.deltaTime;
-
+		else if (playerInVision){ //move to player
+			rotateForMovement(transform.position + directionLastKnown);
 			patrolMove(transform.position + directionLastKnown, chaseSpeed);
 
+			//if reached lastKnownPos, stop and look around
+			if (( lastKnownPosition - transform.position ).magnitude <= 0.25f ) {
+				//TODO: make this work
+				StartCoroutine("lookAround");
+			}
+
+			playerFollowCountDown -= Time.deltaTime;
+		}
+		else {
+			patrolMove(transform.position + directionLastKnown, chaseSpeed);
+			playerFollowCountDown -= Time.deltaTime;
 			if (playerFollowCountDown <= 0f) {
 				followingPath = true;
 			}
 		}
+	}
+
+	void OnDrawGizmos() {
+		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
+		Gizmos.color = Color.white;
+		Gizmos.DrawLine(transform.position, rch2d.point);
 	}
 }
