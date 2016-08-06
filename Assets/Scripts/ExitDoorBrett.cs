@@ -68,7 +68,6 @@ public class ExitDoorBrett : MonoBehaviour {
 			playerTwoInstruction.text = "Press [SPACE] to escape!";
 			if (Input.GetKeyDown(KeyCode.Space)) { // If he presses space,
 				playerTwo.SetActive(false); // Disable his character from the scene.
-
 				EndGame();
 
 			}
