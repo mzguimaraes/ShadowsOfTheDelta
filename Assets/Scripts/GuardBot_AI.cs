@@ -32,6 +32,12 @@ public class GuardBot_AI : MonoBehaviour {
 
 	private Collider2D spotlight;
 
+	void OnCollisionEnter2D(Collision2D other) {
+		if (other.collider.tag == "Player") {
+			other.gameObject.GetComponent<PlayerStatus>().Kill();
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		transform.position = patrol.path[0].transform.position;
@@ -108,12 +114,12 @@ public class GuardBot_AI : MonoBehaviour {
 	}
 
 	//shoot
-	void OnTriggerStay2D(Collider2D other) {
-		//TODO: make bullet rotate toward player (and change bullet sprite to be oblong)
-		if (other.tag == "Player") {
-			Instantiate(bullet, transform.position, Quaternion.identity);
-		}
-	}
+//	void OnTriggerStay2D(Collider2D other) {
+//		//TODO: make bullet rotate toward player (and change bullet sprite to be oblong)
+//		if (other.tag == "Player") {
+//			Instantiate(bullet, transform.position, Quaternion.identity);
+//		}
+//	}
 
 	//follow/search for player
 	void OnTriggerEnter2D(Collider2D other) {
