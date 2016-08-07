@@ -4,7 +4,7 @@ using System.Collections;
 public class Door : MonoBehaviour {
 
 	// Creating public transform variables for both players. These will be used for the key pickup and door unlock codes.
-	public Transform Player1Pos;
+	public Transform Player1Pos;  
 	public Transform Player2Pos;
 
 	// Creating public instance of one key. Left code for a second and third keys.  Uncomment those lines if they're needed.
