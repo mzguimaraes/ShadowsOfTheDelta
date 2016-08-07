@@ -25,19 +25,28 @@ public class SwitchFunctions : MonoBehaviour {
 	void Update () {
 
 		// Code that allows Player 1 or Player 2 to pick up Key1.  The input buttons and distance to key are very subject to change.
-		if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn == false)) {
 
+//		if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn == false)) {
+//
+//			SwitchSFX.PlayOneShot (KeyPickup);
+//			SwitchIsOn = true;
+//			Debug.Log (SwitchIsOn);
+//
+//		} else if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn == true)) {
+//
+//			SwitchSFX.PlayOneShot (KeyPickup);
+//			SwitchIsOn = false;
+//			Debug.Log (SwitchIsOn);
+//		}
+		
+		// suggested new structure:
+		if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) ) {
 			SwitchSFX.PlayOneShot (KeyPickup);
-			SwitchIsOn = true;
-			Debug.Log (SwitchIsOn);
-
-		} else if (((transform.position - Player1Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.RightShift) && (SwitchIsOn == true)) {
-
-			SwitchSFX.PlayOneShot (KeyPickup);
-			SwitchIsOn = false;
-			Debug.Log (SwitchIsOn);
+			SwitchIsOn = !SwitchIsOn; // you can set 
+			Debug.Log ("switch value is now: " + SwitchIsOn);
 		}
 
+		// do the same fix with the code below:
 
 		if (((transform.position - Player2Pos.position).magnitude < 2.5f) && Input.GetKeyDown (KeyCode.E) && (SwitchIsOn = false)) {
 
