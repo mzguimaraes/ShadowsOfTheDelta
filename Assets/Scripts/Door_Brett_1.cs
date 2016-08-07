@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Door : MonoBehaviour {
+public class Door_Brett_1: MonoBehaviour {
 
 	// Creating public transform variables for both players. These will be used for the key pickup and door unlock codes.
 	public Transform Player1Pos;  
@@ -13,10 +13,11 @@ public class Door : MonoBehaviour {
 	Collider2D DoorCollider;
 
 	// Setting up bools for doors here. Left code for a second and third doors.  Uncomment those lines if they're needed.
-	bool DoorIsUnlocked = false;
+	// bool DoorIsUnlocked = false;
 
 	// Creating public instance of key so it can be accessed
-	public SwitchFunctions Switch;
+	public SwitchFunctionsBrett Switch;
+	public SwitchFunctionsBrett Switch2;
 
 	public AudioSource DoorSFX;
 	public AudioClip DoorOpening;
@@ -33,15 +34,18 @@ public class Door : MonoBehaviour {
 	void Update () {
 
 		// Code that allows Player 1 or Player 2 to Unlock Door 1 after picking up Key 1
-		if (Switch.SwitchIsOn == true) {
+		if (Switch.SwitchIsOn == true && Switch2.SwitchIsOn == true) {
 
 			DoorSprite.enabled = false;
 			DoorCollider.enabled = false;
 
-		} else if (Switch.SwitchIsOn == false) {
+
+
+		} else if (Switch.SwitchIsOn == false && Switch2.SwitchIsOn == false) {
 
 			DoorSprite.enabled = true;
 			DoorCollider.enabled = true;
+
 
 		}
 
