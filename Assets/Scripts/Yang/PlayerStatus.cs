@@ -66,10 +66,18 @@ public class PlayerStatus : MonoBehaviour {
 
 		if (deadBehaviour == DeadBehaviour.IMMOVABLE) {
 			// if the behaviour is IMMOVABLE, enable the circle collider
-			GetComponent<CircleCollider2D> ().enabled = true;
+			//GetComponent<CircleCollider2D> ().enabled = true;
+			Collider2D [] colliders = GetComponents<Collider2D>();
+			foreach(Collider2D collider in colliders){
+				collider.enabled = true;
+			}
 		} else if (deadBehaviour == DeadBehaviour.GOTHROUGH){
 			// if the behaviour is GOTHROUGH, disable the circle collider
-			GetComponent<CircleCollider2D> ().enabled = false;
+			//GetComponent<CircleCollider2D> ().enabled = false;
+			Collider2D [] colliders = GetComponents<Collider2D>();
+			foreach(Collider2D collider in colliders){
+				collider.enabled = false;
+			}
 		}
 
 
