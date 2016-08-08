@@ -20,8 +20,11 @@ public class Bullet : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		if (other.tag == "Player") {
+			if(GetComponent<PlayerStatus>() != null){
+				GetComponent<PlayerStatus> ().Kill ();
+			}
 			//do damage (once implemented TODO)
-			Destroy(this.gameObject);
+			// Destroy(this.gameObject);
 		}
 		else if (other.tag != "Enemy") {
 			Destroy(this.gameObject);
