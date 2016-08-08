@@ -1,4 +1,10 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Brett Moody @bam4 and Mike Thal @mikeathal
+ */
+
+
+
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 

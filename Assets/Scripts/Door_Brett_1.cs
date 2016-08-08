@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Brett Moody @bam4
+ */
+
+
+
+
+using UnityEngine;
 using System.Collections;
 
 public class Door_Brett_1: MonoBehaviour {
