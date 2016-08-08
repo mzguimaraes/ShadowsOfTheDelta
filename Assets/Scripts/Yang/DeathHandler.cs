@@ -1,4 +1,5 @@
 ﻿// script by Yang Liu
+//edited by Marcus Guimaraes @mzguimaraes
 
 using UnityEngine;
 using System.Collections;
@@ -10,7 +11,12 @@ using UnityEngine.SceneManagement;		// for SceneManager
 public class DeathHandler : MonoBehaviour {
 
 	int player_count;
-	int dead_player_count;
+	private int dead_player_count;
+	public int Dead_player_count {
+		get {
+			return dead_player_count;
+		}
+	}
 
 	void Start () {
 

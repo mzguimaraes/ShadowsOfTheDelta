@@ -1,5 +1,6 @@
 ﻿/*
  * Author: Brett Moody @bam4
+ * Editor: Marcus Guimaraes @mzguimaraes
  */
 
 
@@ -35,7 +36,7 @@ public class AlarmTimerBrett : MonoBehaviour {
 		}
 
 		if (timeLeft <= 0) {
-			SceneManager.LoadScene("LoseScreenBrett");
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
 		}
 
