@@ -1,5 +1,5 @@
 ﻿/*
- * Author: Brett Moody @bam4
+ * Author: Brett Moody @bam4 && Mike Thal @Mikeathal
  */
 
 
@@ -8,7 +8,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Door_Brett_1: MonoBehaviour {
+public class Door: MonoBehaviour {
 
 	// Creating public transform variables for both players. These will be used for the key pickup and door unlock codes.
 	public Transform Player1Pos;  
@@ -23,8 +23,8 @@ public class Door_Brett_1: MonoBehaviour {
 	// bool DoorIsUnlocked = false;
 
 	// Creating public instance of key so it can be accessed
-	public SwitchFunctionsBrett Switch;
-	public SwitchFunctionsBrett Switch2;
+	public SwitchFunctions Switch;
+	public SwitchFunctions Switch2;
 
 	public AudioSource DoorSFX;
 	public AudioClip DoorOpening;

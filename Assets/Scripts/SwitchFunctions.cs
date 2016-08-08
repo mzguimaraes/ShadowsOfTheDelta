@@ -8,7 +8,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class SwitchFunctionsBrett : MonoBehaviour {
+public class SwitchFunctions : MonoBehaviour {
 
 	// Creating public transform variables for both players. 
 	public Transform Player1Pos;
@@ -19,7 +19,7 @@ public class SwitchFunctionsBrett : MonoBehaviour {
 	public Sprite redLever; // This is the sprite that represents the OFF position.
 
 	public bool SwitchIsOn = false; // Setting the switch to false intially. Doors are THERE when switches are OFF.
-	public SwitchFunctionsBrett otherSwitch;  // Getting access to the switch's twin.
+	public SwitchFunctions otherSwitch;  // Getting access to the switch's twin.
 
 	public Text playerOneInstruction; // These text boxes tell the player which buttons to press.
 	public Text playerTwoInstruction;
