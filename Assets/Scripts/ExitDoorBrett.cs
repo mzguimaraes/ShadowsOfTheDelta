@@ -1,5 +1,6 @@
 ﻿/*
  * Author: Brett Moody @bam4
+ * Edited: Marcus Guimaraes @mzguimaraes
  */
 
 
@@ -26,6 +27,7 @@ public class ExitDoorBrett : MonoBehaviour {
 	public GameObject playerTwoPanel; // This is the panel behind the player two help box.
 	public GameObject breakoutPanel; // This is the panel behind the breakout text box!
 
+	public DeathHandler deathHandler; //to get num. players dead
 
 
 	public float newCounterTime = 30; // This is the counter time that is assigned when one player escapes the level.
@@ -51,17 +53,24 @@ public class ExitDoorBrett : MonoBehaviour {
 	}
 
 	void EndGame () {
+		//TODO: figure out intended behavior and use that
 		ExitDoorSource.PlayOneShot (exitDoorOpenSFX); // Play the SFX of the door opening.
-		if (hasPlayerEscaped == false) { // If no one else has escaped...
+		if (hasPlayerEscaped == false && deathHandler.Dead_player_count == 0) { // If no one else has escaped...
 //			closedExitDoorSprite.SetActive (false); // Turn off Closed door sprite
 //			openedExitDoorSprite.SetActive (true); // Turn on Open door sprite
 			// alarm.GetComponent<AlarmTimerBrett>();
 			AlarmTimerBrett.timeLeft = newCounterTime; // Set the time left variable to the value of newCounterTime, which is thirty seconds.
 			hasPlayerEscaped = true;
-		} else {
+		}
+		else if (deathHandler.Dead_player_count > 0){
+			//they win (for now)
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+		}
+		else {
 			//playerEscapedText.text = "Breakout!";  // Display "Breakout" in the center of the screen.
 			textTimeEnd = 5;
 			breakoutPanel.SetActive(true);
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 
 		}
 
@@ -99,7 +108,8 @@ public class ExitDoorBrett : MonoBehaviour {
 		}
 
 		if (textTimeEnd <= 0) { // When their is no time left in the timer,
-			SceneManager.LoadScene ("CompletedLevelScreenBrett"); // After the "Breakout!" text has shown for five seconds, go to the completed level screen.
+			int currLevel = SceneManager.GetActiveScene().buildIndex;
+			SceneManager.LoadScene(currLevel); // After the "Breakout!" text has shown for five seconds, go to the completed level screen.
 		}
 
 	}
