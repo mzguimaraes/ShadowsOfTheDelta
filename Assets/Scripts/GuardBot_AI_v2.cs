@@ -91,7 +91,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			moveToPlayer(target);
 		}
 		else { //look around
-			transform.Rotate(0f, 0f, 500f * Time.deltaTime);
+			transform.Rotate(0f, 0f, 300f * Time.deltaTime);
 		}
 	}
 	//stop looking after a certain amount of time has elapsed
@@ -118,6 +118,9 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		
 		if (patrol.path[1] != null) //if there is a second node in the path, set the destination to it
 			patrolDestination = patrol.path[1].transform;
+		else {
+			patrolDestination = patrol.path[0].transform;
+		}
 		
 		if (patrol.path[0] != null)
 			transform.position = patrol.path[0].transform.position;
@@ -152,6 +155,11 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	void OnDrawGizmos() {
 		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
 		Gizmos.color = Color.white;
-		Gizmos.DrawLine(transform.position, rch2d.point);
+		if (rch2d.point != Vector2.zero) {
+			Gizmos.DrawLine(transform.position, rch2d.point);
+		}
+		else {
+			Gizmos.DrawLine(transform.position, transform.position + transform.up);
+		}
 	}
 }

@@ -1,4 +1,10 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Brett Moody @bam4
+ * Editor: Marcus Guimaraes @mzguimaraes
+ */
+
+
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -30,7 +36,7 @@ public class AlarmTimerBrett : MonoBehaviour {
 		}
 
 		if (timeLeft <= 0) {
-			SceneManager.LoadScene("LoseScreenBrett");
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
 		}
 
