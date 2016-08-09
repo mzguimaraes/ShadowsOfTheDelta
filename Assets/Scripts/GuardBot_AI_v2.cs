@@ -60,10 +60,8 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				isPatrolling = true;
 			}
 		}
-
 	}
-
-
+		
 	//move along patrol path
 	private void moveAlongPatrolPath() {
 		Vector3 moveVector = patrolDestination.position - transform.position;
