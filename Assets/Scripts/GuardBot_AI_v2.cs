@@ -5,6 +5,8 @@
 using UnityEngine;
 using System.Collections;
 
+using System.Collections.Generic;
+
 public class GuardBot_AI_v2 : MonoBehaviour {
 	
 	//for patrolling
@@ -21,8 +23,46 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private float playerChaseCountDown;
 	public float chaseSpeed = 4f;
 	private bool isChasing = false;
+	private bool isPatrolling = true;
+	private Stack<Vector3> visited = new Stack<Vector3>(); //locations visited since patrol last left
 
-	//FUNCTIONALITY NEEDED:
+	private float arrivalDistance = 0.1f; //radius in which GuardBot is "at" a location
+
+	private void returnToPatrol() {
+		//if patrolDestination in sight, move there
+		RaycastHit2D lookToPatrol = Physics2D.Raycast(transform.position, 
+			patrolDestination.position - transform.position, 
+			(patrolDestination.position - transform.position).magnitude);
+		//Debug.Log(lookToPatrol.collider != null ? lookToPatrol.collider.ToString() : "null");
+
+		//patrolDestination in sight as long as raycast hit nothing (since length is dynamic)
+		if (lookToPatrol.collider == null) {
+			//return to patrol
+			visited.Clear();
+			isPatrolling = true;
+		}
+		//if patrolDestination not in sight, move to last location visited
+		else {
+			if (visited.Count > 0){//move to last visited location
+				rotateTowards(visited.Peek());
+				Vector3 moveVector = visited.Peek() - transform.position;
+
+				if (moveVector.magnitude <= 0.1f) { //we've reached the destination
+					visited.Pop();
+					return; //may hang for a frame but that's ok TODO: fix this if time
+				}
+
+				moveVector.Normalize();
+
+				transform.position += moveVector * speed * Time.deltaTime;
+			}
+			else {
+				isPatrolling = true;
+			}
+		}
+
+	}
+
 
 	//move along patrol path
 	private void moveAlongPatrolPath() {
@@ -35,7 +75,10 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	//move along circular path too
 	//reverse direction at end of path
 	private void checkPatrol() {
-		if ((transform.position - patrolDestination.position).magnitude <= 0.1f ) { //reached destination, find new one
+		if ((transform.position - patrolDestination.position).magnitude <= arrivalDistance ) { //reached destination, find new one
+
+			//transform.position = patrolDestination.position; //teleport to exact destination (to keep path predictable)
+
 			if (!isTravelingBackwards) {
 				if (patrolDestinationIndex + 1 < patrol.path.Count) { //if there's another node ahead, use it
 					patrolDestination = patrol.path[patrolDestinationIndex ++].transform;
@@ -87,15 +130,21 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 
 	//when line of sight broken with player, move to last seen location and look around
 	private void moveToLastKnown(Vector3 target) {
-		if ( (target - transform.position).magnitude > .1f ) { //move closer
+		if ( (target - transform.position).magnitude > arrivalDistance ) { //move closer
 			moveToPlayer(target);
 		}
 		else { //look around
+			if (visited.Count > 0) {
+				if (!visited.Peek().Equals(target)) { //add position to visited if not already there
+				visited.Push(target);
+				}
+			}
+			else { //visited.Count is empty
+				visited.Push(target);
+			}
 			transform.Rotate(0f, 0f, 300f * Time.deltaTime);
 		}
 	}
-	//stop looking after a certain amount of time has elapsed
-	//move around walls (maybe create nodes?)
 
 	//rotate in direction of movement
 	private void rotateTowards(Vector3 target) {
@@ -128,9 +177,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-//		if (lastKnownPosition != Vector3.zero)
-//			Debug.Log(lastKnownPosition);
-
+		//stop looking after a certain amount of time has elapsed
 		if (playerChaseCountDown <= 0f) {
 			isChasing = false;
 		}
@@ -140,15 +187,21 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			moveToLastKnown(lastKnownPosition);
 			playerChaseCountDown -= Time.deltaTime;
 		}
+		else if (!isPatrolling) {
+			returnToPatrol();
+		}
 		else if (player == null) { //no player
-			moveAlongPatrolPath();
+			
 			rotateTowards(patrolDestination.position);
+			moveAlongPatrolPath();
 			checkPatrol();
 		}
-		else {
+		else { //sees player and will chase
 			isChasing = true;
-			moveToPlayer(player.position);
+			isPatrolling = false;
 			rotateTowards(player.position);
+			moveToPlayer(player.position);
+
 		}
 	}
 
