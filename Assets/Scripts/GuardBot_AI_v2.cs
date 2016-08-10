@@ -6,11 +6,12 @@ using UnityEngine;
 using System.Collections;
 
 using System.Collections.Generic;
+using UnityEngine.Audio;
 
 public class GuardBot_AI_v2 : MonoBehaviour {
 
 	//sound: guardNotice
-	public AudioClip guardNotice;
+	private AudioSource audioSource;
 
 	//for movement with physics
 	//private Rigidbody2D myRb2d;
@@ -147,6 +148,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				lastKnownPosition = rch2d.collider.gameObject.transform.position;
 				playerChaseCountDown = playerChaseTime;
 				canMove = true;
+				//audioSource.PlayOneShot(audioSource.clip);
 				return rch2d.collider.transform;
 			}
 		}
@@ -234,6 +236,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			transform.position = patrol.path[0].transform.position;
 
 		//myRb2d = GetComponent<Rigidbody2D>();
+		audioSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -262,6 +265,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				isChasing = true;
 				isPatrolling = false;
 				canMove = true; //bit of a hack
+				audioSource.PlayOneShot(audioSource.clip);
 				rotateTowards(player.position);
 				moveToPlayer(player.position);
 
