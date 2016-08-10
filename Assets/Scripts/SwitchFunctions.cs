@@ -75,11 +75,15 @@ public class SwitchFunctions : MonoBehaviour {
 
 		// Code that allows Player 1 to flip the switch.
 		if ((transform.position - Player1Pos.position).magnitude < 1f) {
-			playerOnePanel.SetActive (true);
-			playerOneInstruction.text = "Press RIGHT SHIFT to flip the switch!";
-			if (Input.GetKeyDown (KeyCode.RightShift)) {
-				FlipSwitch();
-			// Debug.Log (SwitchIsOn);
+			// check if the Player 1 is not dead now
+			if (!Player1Pos.GetComponent<PlayerStatus> ().IsDead ()) {
+				playerOnePanel.SetActive (true);
+				playerOneInstruction.text = "Press RIGHT SHIFT to flip the switch!";
+				if (Input.GetKeyDown (KeyCode.RightShift)) {
+					FlipSwitch ();
+					// Debug.Log (SwitchIsOn);
+				}
+
 			}
 
 		} 
@@ -92,11 +96,14 @@ public class SwitchFunctions : MonoBehaviour {
 
 
 		if (((transform.position - Player2Pos.position).magnitude < 1f)) {
+			// check if the Player 2 is not dead now
+			if (!Player2Pos.GetComponent<PlayerStatus> ().IsDead ()) {
+				playerTwoPanel.SetActive (true);
+				playerTwoInstruction.text = "Press SPACE to flip the switch!";
+				if (Input.GetKeyDown (KeyCode.Space)) {
+					FlipSwitch ();
+				}
 
-			playerTwoPanel.SetActive (true);
-			playerTwoInstruction.text = "Press SPACE to flip the switch!";
-			if (Input.GetKeyDown (KeyCode.Space)) {
-				FlipSwitch ();
 			}
 
 		}
