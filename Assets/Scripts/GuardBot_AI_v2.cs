@@ -28,6 +28,8 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 
 	private float arrivalDistance = 0.1f; //radius in which GuardBot is "at" a location
 
+	public GameObject flashlight;
+
 	private void returnToPatrol() {
 		//if patrolDestination in sight, move there
 		RaycastHit2D lookToPatrol = Physics2D.Raycast(transform.position, 
@@ -157,6 +159,14 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			isChasing = false;
 		}
 	}
+
+	//scales the flashlight image to stop at walls
+//	private void scaleFlashlight() {
+//		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
+//		if (rch2d.collider != null) {
+//			flashlight.transform.localScale = new Vector3(0f, rch2d.distance, 0f);
+//		}
+//	}
 
 	// Use this for initialization
 	void Start () {
