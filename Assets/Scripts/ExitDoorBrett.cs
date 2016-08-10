@@ -108,7 +108,7 @@ public class ExitDoorBrett : MonoBehaviour {
 		}
 
 		if (textTimeEnd <= 0) { // When their is no time left in the timer,
-			int currLevel = SceneManager.GetActiveScene().buildIndex;
+			int currLevel = (SceneManager.GetActiveScene().buildIndex + 1);
 			SceneManager.LoadScene(currLevel); // After the "Breakout!" text has shown for five seconds, go to the completed level screen.
 		}
 

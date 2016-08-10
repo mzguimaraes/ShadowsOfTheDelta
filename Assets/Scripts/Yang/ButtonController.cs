@@ -10,6 +10,6 @@ public class ButtonController : MonoBehaviour {
 		if(sceneNumber == -1){
 			return;
 		}
-		SceneManager.LoadScene (sceneNumber);
+		SceneManager.LoadScene (1);
 	}
 }
