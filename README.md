@@ -1,4 +1,4 @@
-# SoundAndVision
+# Shadows of the Delta
 Final Project for NYU Intro to Game Development, Summer 2016
 
 Contributors:
