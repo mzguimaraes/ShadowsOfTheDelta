@@ -32,7 +32,7 @@ public class Door: MonoBehaviour {
 
 	void Start () {
 		
-		Switch.SwitchIsOn = false;
+		//Switch.SwitchIsOn = false;
 		DoorSprite = GetComponent<SpriteRenderer> ();
 		DoorCollider = GetComponent<Collider2D> ();
 
