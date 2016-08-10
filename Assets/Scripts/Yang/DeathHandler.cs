@@ -11,6 +11,11 @@ using UnityEngine.SceneManagement;		// for SceneManager
 public class DeathHandler : MonoBehaviour {
 
 	int player_count;
+	public int Player_count{
+		get {
+			return player_count;
+		}
+	}
 	private int dead_player_count;
 	public int Dead_player_count {
 		get {
