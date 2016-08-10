@@ -35,7 +35,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private bool isPatrolling = true;
 	private Stack<Vector3> visited = new Stack<Vector3>(); //locations visited since patrol last left
 
-	private float arrivalDistance = 0.1f; //radius in which GuardBot is "at" a location
+	private float arrivalDistance = 0.15f; //radius in which GuardBot is "at" a location
 	private bool canMove = true;
 
 	public GameObject flashlight;
@@ -265,9 +265,9 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				returnToPatrol();
 			}
 			else if (player == null) { //no player -- normal patrol
+				checkPatrol();
 				rotateTowards(patrolDestination.position);
 				moveAlongPatrolPath();
-				checkPatrol();
 			}
 			else { //sees player and will chase
 				isChasing = true;
