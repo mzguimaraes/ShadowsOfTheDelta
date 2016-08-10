@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 public class GuardBot_AI_v2 : MonoBehaviour {
 
+	//sound: guardNotice
+	public AudioClip guardNotice;
+
 	//for movement with physics
 	//private Rigidbody2D myRb2d;
 	//private Vector2 moveForce;
