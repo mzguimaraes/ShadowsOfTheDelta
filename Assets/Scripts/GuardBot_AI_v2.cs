@@ -5,7 +5,14 @@
 using UnityEngine;
 using System.Collections;
 
+using System.Collections.Generic;
+
 public class GuardBot_AI_v2 : MonoBehaviour {
+
+	//for movement with physics
+	private Rigidbody2D myRb2d;
+	private Vector2 moveForce;
+
 	
 	//for patrolling
 	public PatrolPath patrol;
@@ -21,21 +28,65 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private float playerChaseCountDown;
 	public float chaseSpeed = 4f;
 	private bool isChasing = false;
+	private bool isPatrolling = true;
+	private Stack<Vector3> visited = new Stack<Vector3>(); //locations visited since patrol last left
 
-	//FUNCTIONALITY NEEDED:
+	private float arrivalDistance = 0.1f; //radius in which GuardBot is "at" a location
+	private bool canMove = true;
 
+	public GameObject flashlight;
+
+	private void returnToPatrol() {
+		//if patrolDestination in sight, move there
+		RaycastHit2D lookToPatrol = Physics2D.Raycast(transform.position, 
+			patrolDestination.position - transform.position, 
+			(patrolDestination.position - transform.position).magnitude);
+		//Debug.Log(lookToPatrol.collider != null ? lookToPatrol.collider.ToString() : "null");
+
+		//patrolDestination in sight as long as raycast hit nothing (since length is dynamic)
+		if (lookToPatrol.collider == null) {
+			//return to patrol
+			visited.Clear();
+			isPatrolling = true;
+		}
+		//if patrolDestination not in sight, move to last location visited
+		else {
+			if (visited.Count > 0){//move to last visited location
+				rotateTowards(visited.Peek());
+				Vector3 moveVector = visited.Peek() - transform.position;
+
+				if (moveVector.magnitude <= 0.1f) { //we've reached the destination
+					visited.Pop();
+					return; //may hang for a frame but that's ok TODO: fix this if time
+				}
+
+				moveVector.Normalize();
+
+				transform.position += moveVector * speed * Time.deltaTime;
+//				moveForce = new Vector2(moveVector.x, moveVector.y);
+			}
+			else {
+				isPatrolling = true;
+			}
+		}
+	}
+		
 	//move along patrol path
 	private void moveAlongPatrolPath() {
 		Vector3 moveVector = patrolDestination.position - transform.position;
 		moveVector.Normalize();
 
 		transform.position += moveVector * speed * Time.deltaTime;
+//		moveForce = new Vector2(moveVector.x, moveVector.y);
 	}
 
 	//move along circular path too
 	//reverse direction at end of path
 	private void checkPatrol() {
-		if ((transform.position - patrolDestination.position).magnitude <= 0.1f ) { //reached destination, find new one
+		if ((transform.position - patrolDestination.position).magnitude <= arrivalDistance ) { //reached destination, find new one
+
+			//transform.position = patrolDestination.position; //teleport to exact destination (to keep path predictable)
+
 			if (!isTravelingBackwards) {
 				if (patrolDestinationIndex + 1 < patrol.path.Count) { //if there's another node ahead, use it
 					patrolDestination = patrol.path[patrolDestinationIndex ++].transform;
@@ -83,19 +134,26 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		Vector3 moveVector = player - transform.position;
 		moveVector.Normalize();
 		transform.position += moveVector * chaseSpeed * Time.deltaTime;
+		//moveForce = new Vector2(moveVector.x, moveVector.y);
 	}
 
 	//when line of sight broken with player, move to last seen location and look around
 	private void moveToLastKnown(Vector3 target) {
-		if ( (target - transform.position).magnitude > .1f ) { //move closer
+		if ( (target - transform.position).magnitude > arrivalDistance ) { //move closer
 			moveToPlayer(target);
 		}
 		else { //look around
+			if (visited.Count > 0) {
+				if (!visited.Peek().Equals(target)) { //add position to visited if not already there
+				visited.Push(target);
+				}
+			}
+			else { //visited.Count is empty
+				visited.Push(target);
+			}
 			transform.Rotate(0f, 0f, 300f * Time.deltaTime);
 		}
 	}
-	//stop looking after a certain amount of time has elapsed
-	//move around walls (maybe create nodes?)
 
 	//rotate in direction of movement
 	private void rotateTowards(Vector3 target) {
@@ -108,6 +166,31 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		if (other.collider.tag == "Player") {
 			other.gameObject.GetComponent<PlayerStatus>().Kill();
 			isChasing = false;
+		}
+		else if (other.collider.tag == "door") {
+			canMove = false;
+		}
+	}
+
+	void OnCollisionStay2D(Collision2D other) {
+		if (other.collider.tag == "door" ) {
+			if (!other.collider.enabled) {
+				canMove = true;
+			}
+		}
+	}
+
+	void OnCollisionExit2D(Collision2D other) {
+		if (other.gameObject.tag == "door") {
+			canMove = true;
+		}
+	}
+
+	//scales the flashlight image to stop at walls
+	private void scaleFlashlight() {
+		RaycastHit2D rch2d = Physics2D.Raycast(flashlight.transform.position, transform.up);
+		if (rch2d.collider != null) {
+			flashlight.transform.localScale = new Vector3(1f, rch2d.distance, 1f);
 		}
 	}
 
@@ -124,33 +207,47 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		
 		if (patrol.path[0] != null)
 			transform.position = patrol.path[0].transform.position;
+
+		myRb2d = GetComponent<Rigidbody2D>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-//		if (lastKnownPosition != Vector3.zero)
-//			Debug.Log(lastKnownPosition);
-
+		//scaleFlashlight();
+		//stop looking after a certain amount of time has elapsed
 		if (playerChaseCountDown <= 0f) {
 			isChasing = false;
 		}
 
-		Transform player = findPlayer();
-		if (isChasing) {
-			moveToLastKnown(lastKnownPosition);
-			playerChaseCountDown -= Time.deltaTime;
-		}
-		else if (player == null) { //no player
-			moveAlongPatrolPath();
-			rotateTowards(patrolDestination.position);
-			checkPatrol();
-		}
-		else {
-			isChasing = true;
-			moveToPlayer(player.position);
-			rotateTowards(player.position);
+		if (canMove){
+			Transform player = findPlayer();
+			if (isChasing) {
+				moveToLastKnown(lastKnownPosition);
+				playerChaseCountDown -= Time.deltaTime;
+			}
+			else if (!isPatrolling) {
+				returnToPatrol();
+			}
+			else if (player == null) { //no player
+				rotateTowards(patrolDestination.position);
+				moveAlongPatrolPath();
+				checkPatrol();
+			}
+			else { //sees player and will chase
+				isChasing = true;
+				isPatrolling = false;
+				rotateTowards(player.position);
+				moveToPlayer(player.position);
+				canMove = true; //bit of a hack
+
+			}
 		}
 	}
+
+//	void FixedUpdate() {
+//		moveForce *= speed * Time.deltaTime;
+//		myRb2d.velocity = moveForce;
+//	}
 
 	void OnDrawGizmos() {
 		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
