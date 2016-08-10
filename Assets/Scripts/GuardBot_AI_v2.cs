@@ -35,7 +35,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private bool isPatrolling = true;
 	private Stack<Vector3> visited = new Stack<Vector3>(); //locations visited since patrol last left
 
-	private float arrivalDistance = 0.1f; //radius in which GuardBot is "at" a location
+	private float arrivalDistance = 0.15f; //radius in which GuardBot is "at" a location
 	private bool canMove = true;
 
 	public GameObject flashlight;
@@ -157,6 +157,14 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 
 	//when it sees the player, run towards it
 	private void moveToPlayer(Vector3 player) {
+
+		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up, arrivalDistance * 4f);
+		if (rch2d.collider != null) {
+			if (rch2d.collider.tag == "door") {
+				return; //don't move
+			}
+		}
+
 		Vector3 moveVector = player - transform.position;
 		moveVector.Normalize();
 		transform.position += moveVector * chaseSpeed * Time.deltaTime;
@@ -257,9 +265,9 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				returnToPatrol();
 			}
 			else if (player == null) { //no player -- normal patrol
+				checkPatrol();
 				rotateTowards(patrolDestination.position);
 				moveAlongPatrolPath();
-				checkPatrol();
 			}
 			else { //sees player and will chase
 				isChasing = true;
