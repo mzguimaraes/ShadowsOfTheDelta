@@ -34,7 +34,7 @@ public class SwitchFunctions : MonoBehaviour {
 
 
 	void Start () {
-		SwitchIsOn = false; //I believe this is redundant.
+		// SwitchIsOn = false; //I believe this is redundant.
 		DoorSprite = GetComponent<SpriteRenderer> ();
 	}
 
@@ -66,7 +66,7 @@ public class SwitchFunctions : MonoBehaviour {
 		
 
 		// Code that allows Player 1 to flip the switch.
-		if ((transform.position - Player1Pos.position).magnitude < 2.5f) {
+		if ((transform.position - Player1Pos.position).magnitude < 1f) {
 			playerOnePanel.SetActive (true);
 			playerOneInstruction.text = "Press RIGHT SHIFT to flip the switch!";
 			if (Input.GetKeyDown (KeyCode.RightShift)) {
@@ -83,7 +83,7 @@ public class SwitchFunctions : MonoBehaviour {
 ////		}
 
 
-		if (((transform.position - Player2Pos.position).magnitude < 2.5f)) {
+		if (((transform.position - Player2Pos.position).magnitude < 1f)) {
 
 			playerTwoPanel.SetActive (true);
 			playerTwoInstruction.text = "Press SPACE to flip the switch!";
