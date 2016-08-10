@@ -35,6 +35,8 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private bool canMove = true;
 
 	public GameObject flashlight;
+	private float canMoveRetryTimerMax = 1f;
+	private float canMoveRetryTimer = 1f;
 
 	private void returnToPatrol() {
 		//if patrolDestination in sight, move there
@@ -172,6 +174,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		else if (other.collider.tag == "door") {
 			canMove = false;
 		}
+		canMoveRetryTimer = canMoveRetryTimerMax;
 	}
 
 	void OnCollisionStay2D(Collision2D other) {
@@ -243,6 +246,20 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				moveToPlayer(player.position);
 
 			}
+		}
+		else { //!canMove
+			canMoveRetryTimer -= Time.deltaTime;
+			if (canMoveRetryTimer <= 0f) {
+				RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
+				if (rch2d.collider != null) {
+					if (rch2d.collider.tag != "door") {
+						canMove = true;
+					}
+					else {
+						canMoveRetryTimer = canMoveRetryTimerMax;
+					}
+				}
+			}	
 		}
 	}
 
