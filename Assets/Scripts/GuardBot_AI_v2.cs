@@ -86,6 +86,21 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	//move along circular path too
 	//reverse direction at end of path
 	private void checkPatrol() {
+
+		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up, 
+			arrivalDistance * 2);
+		if (rch2d.collider != null) { //something in the way
+			//switch directions
+			if (!isTravelingBackwards) {
+				isTravelingBackwards = true;
+				patrolDestination = patrol.path[patrolDestinationIndex --].transform;
+			}
+			else {
+				isTravelingBackwards = false;
+				patrolDestination = patrol.path[patrolDestinationIndex ++].transform;
+			}
+		}
+
 		if ((transform.position - patrolDestination.position).magnitude <= arrivalDistance ) { //reached destination, find new one
 
 			//transform.position = patrolDestination.position; //teleport to exact destination (to keep path predictable)
