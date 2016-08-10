@@ -10,8 +10,8 @@ using System.Collections.Generic;
 public class GuardBot_AI_v2 : MonoBehaviour {
 
 	//for movement with physics
-	private Rigidbody2D myRb2d;
-	private Vector2 moveForce;
+	//private Rigidbody2D myRb2d;
+	//private Vector2 moveForce;
 
 	
 	//for patrolling
@@ -35,6 +35,8 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private bool canMove = true;
 
 	public GameObject flashlight;
+	private float canMoveRetryTimerMax = 1f;
+	private float canMoveRetryTimer = 1f;
 
 	private void returnToPatrol() {
 		//if patrolDestination in sight, move there
@@ -48,6 +50,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			//return to patrol
 			visited.Clear();
 			isPatrolling = true;
+			canMove = true; //bit of a hack
 		}
 		//if patrolDestination not in sight, move to last location visited
 		else {
@@ -55,7 +58,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				rotateTowards(visited.Peek());
 				Vector3 moveVector = visited.Peek() - transform.position;
 
-				if (moveVector.magnitude <= 0.1f) { //we've reached the destination
+				if (moveVector.magnitude <= arrivalDistance) { //we've reached the destination
 					visited.Pop();
 					return; //may hang for a frame but that's ok TODO: fix this if time
 				}
@@ -123,6 +126,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			if (rch2d.collider.tag == "Player") {
 				lastKnownPosition = rch2d.collider.gameObject.transform.position;
 				playerChaseCountDown = playerChaseTime;
+				canMove = true;
 				return rch2d.collider.transform;
 			}
 		}
@@ -170,6 +174,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		else if (other.collider.tag == "door") {
 			canMove = false;
 		}
+		canMoveRetryTimer = canMoveRetryTimerMax;
 	}
 
 	void OnCollisionStay2D(Collision2D other) {
@@ -208,7 +213,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		if (patrol.path[0] != null)
 			transform.position = patrol.path[0].transform.position;
 
-		myRb2d = GetComponent<Rigidbody2D>();
+		//myRb2d = GetComponent<Rigidbody2D>();
 	}
 	
 	// Update is called once per frame
@@ -236,11 +241,25 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			else { //sees player and will chase
 				isChasing = true;
 				isPatrolling = false;
+				canMove = true; //bit of a hack
 				rotateTowards(player.position);
 				moveToPlayer(player.position);
-				canMove = true; //bit of a hack
 
 			}
+		}
+		else { //!canMove
+			canMoveRetryTimer -= Time.deltaTime;
+			if (canMoveRetryTimer <= 0f) {
+				RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
+				if (rch2d.collider != null) {
+					if (rch2d.collider.tag != "door") {
+						canMove = true;
+					}
+					else {
+						canMoveRetryTimer = canMoveRetryTimerMax;
+					}
+				}
+			}	
 		}
 	}
 
