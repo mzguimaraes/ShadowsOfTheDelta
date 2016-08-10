@@ -88,16 +88,18 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private void checkPatrol() {
 
 		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up, 
-			arrivalDistance * 2);
+			arrivalDistance * 4f);
 		if (rch2d.collider != null) { //something in the way
-			//switch directions
-			if (!isTravelingBackwards) {
-				isTravelingBackwards = true;
-				patrolDestination = patrol.path[patrolDestinationIndex --].transform;
-			}
-			else {
-				isTravelingBackwards = false;
-				patrolDestination = patrol.path[patrolDestinationIndex ++].transform;
+			if (rch2d.collider.tag == "door") {
+				//switch directions
+				if (!isTravelingBackwards) {
+					isTravelingBackwards = true;
+					patrolDestination = patrol.path[patrolDestinationIndex --].transform;
+				}
+				else {
+					isTravelingBackwards = false;
+					patrolDestination = patrol.path[patrolDestinationIndex ++].transform;
+				}
 			}
 		}
 
@@ -248,7 +250,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			else if (!isPatrolling) {
 				returnToPatrol();
 			}
-			else if (player == null) { //no player
+			else if (player == null) { //no player -- normal patrol
 				rotateTowards(patrolDestination.position);
 				moveAlongPatrolPath();
 				checkPatrol();
