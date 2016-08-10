@@ -8,6 +8,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GuardBot_AI_v2 : MonoBehaviour {
+
+	//for movement with physics
+	private Rigidbody2D myRb2d;
+	private Vector2 moveForce;
+
 	
 	//for patrolling
 	public PatrolPath patrol;
@@ -27,6 +32,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private Stack<Vector3> visited = new Stack<Vector3>(); //locations visited since patrol last left
 
 	private float arrivalDistance = 0.1f; //radius in which GuardBot is "at" a location
+	private bool canMove = true;
 
 	public GameObject flashlight;
 
@@ -57,6 +63,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				moveVector.Normalize();
 
 				transform.position += moveVector * speed * Time.deltaTime;
+//				moveForce = new Vector2(moveVector.x, moveVector.y);
 			}
 			else {
 				isPatrolling = true;
@@ -70,6 +77,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		moveVector.Normalize();
 
 		transform.position += moveVector * speed * Time.deltaTime;
+//		moveForce = new Vector2(moveVector.x, moveVector.y);
 	}
 
 	//move along circular path too
@@ -126,6 +134,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		Vector3 moveVector = player - transform.position;
 		moveVector.Normalize();
 		transform.position += moveVector * chaseSpeed * Time.deltaTime;
+		//moveForce = new Vector2(moveVector.x, moveVector.y);
 	}
 
 	//when line of sight broken with player, move to last seen location and look around
@@ -158,15 +167,32 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 			other.gameObject.GetComponent<PlayerStatus>().Kill();
 			isChasing = false;
 		}
+		else if (other.collider.tag == "door") {
+			canMove = false;
+		}
+	}
+
+	void OnCollisionStay2D(Collision2D other) {
+		if (other.collider.tag == "door" ) {
+			if (!other.collider.enabled) {
+				canMove = true;
+			}
+		}
+	}
+
+	void OnCollisionExit2D(Collision2D other) {
+		if (other.gameObject.tag == "door") {
+			canMove = true;
+		}
 	}
 
 	//scales the flashlight image to stop at walls
-//	private void scaleFlashlight() {
-//		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
-//		if (rch2d.collider != null) {
-//			flashlight.transform.localScale = new Vector3(0f, rch2d.distance, 0f);
-//		}
-//	}
+	private void scaleFlashlight() {
+		RaycastHit2D rch2d = Physics2D.Raycast(flashlight.transform.position, transform.up);
+		if (rch2d.collider != null) {
+			flashlight.transform.localScale = new Vector3(1f, rch2d.distance, 1f);
+		}
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -181,37 +207,47 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		
 		if (patrol.path[0] != null)
 			transform.position = patrol.path[0].transform.position;
+
+		myRb2d = GetComponent<Rigidbody2D>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		//scaleFlashlight();
 		//stop looking after a certain amount of time has elapsed
 		if (playerChaseCountDown <= 0f) {
 			isChasing = false;
 		}
 
-		Transform player = findPlayer();
-		if (isChasing) {
-			moveToLastKnown(lastKnownPosition);
-			playerChaseCountDown -= Time.deltaTime;
-		}
-		else if (!isPatrolling) {
-			returnToPatrol();
-		}
-		else if (player == null) { //no player
-			
-			rotateTowards(patrolDestination.position);
-			moveAlongPatrolPath();
-			checkPatrol();
-		}
-		else { //sees player and will chase
-			isChasing = true;
-			isPatrolling = false;
-			rotateTowards(player.position);
-			moveToPlayer(player.position);
+		if (canMove){
+			Transform player = findPlayer();
+			if (isChasing) {
+				moveToLastKnown(lastKnownPosition);
+				playerChaseCountDown -= Time.deltaTime;
+			}
+			else if (!isPatrolling) {
+				returnToPatrol();
+			}
+			else if (player == null) { //no player
+				rotateTowards(patrolDestination.position);
+				moveAlongPatrolPath();
+				checkPatrol();
+			}
+			else { //sees player and will chase
+				isChasing = true;
+				isPatrolling = false;
+				rotateTowards(player.position);
+				moveToPlayer(player.position);
+				canMove = true; //bit of a hack
 
+			}
 		}
 	}
+
+//	void FixedUpdate() {
+//		moveForce *= speed * Time.deltaTime;
+//		myRb2d.velocity = moveForce;
+//	}
 
 	void OnDrawGizmos() {
 		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up);
