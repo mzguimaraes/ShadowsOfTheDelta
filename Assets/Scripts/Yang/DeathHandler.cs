@@ -51,7 +51,10 @@ public class DeathHandler : MonoBehaviour {
 	void AfterDeath(){
 
 		// reload the current active scene
-		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
+		Invoke("loadNextScene", 2f);
+	}
 
+	void loadNextScene() {
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
 	}
 }
