@@ -28,7 +28,8 @@ public class SwitchFunctions : MonoBehaviour {
 
 	// Setting up AudioSources to be triggered when players perform certain actions
 	public AudioSource SwitchSFX;
-	public AudioClip KeyPickup;
+	public AudioClip TurnSwitchOn;
+	public AudioClip TurnSwitchOff;
 
 	public bool switchColor;
 
@@ -40,8 +41,15 @@ public class SwitchFunctions : MonoBehaviour {
 
 
 	void FlipSwitch () {
-		SwitchSFX.PlayOneShot (KeyPickup);
 		SwitchIsOn = !SwitchIsOn;
+
+		if (SwitchIsOn) {
+			SwitchSFX.PlayOneShot (TurnSwitchOn);
+		} else {
+			SwitchSFX.PlayOneShot (TurnSwitchOff);
+		}
+
+
 		otherSwitch.SwitchIsOn = SwitchIsOn;
 		switchColor = true;
 		otherSwitch.switchColor = true;
