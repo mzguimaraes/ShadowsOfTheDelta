@@ -91,6 +91,10 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	//reverse direction at end of path
 	private void checkPatrol() {
 
+		if (patrol.path.Count <= 1) {
+			return;
+		}
+
 		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up, 
 			arrivalDistance * 4f);
 		if (rch2d.collider != null) { //something in the way
@@ -231,10 +235,13 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if( patrol.path[patrol.path.Count - 1].Equals( patrol.path[0] ) ) //first and last nodes are equal--path is circular
-			isCircular = true;
+		if (patrol.path.Count > 1) {
+			if( patrol.path[patrol.path.Count - 1].Equals( patrol.path[0] ) ) //first and last nodes are equal--path is circular
+				isCircular = true;
+		}
+
 		
-		if (patrol.path[1] != null) //if there is a second node in the path, set the destination to it
+		if (patrol.path.Count >= 2) //if there is a second node in the path, set the destination to it
 			patrolDestination = patrol.path[1].transform;
 		else {
 			patrolDestination = patrol.path[0].transform;
