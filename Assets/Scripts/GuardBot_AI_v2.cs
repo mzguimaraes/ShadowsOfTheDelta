@@ -157,6 +157,14 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 
 	//when it sees the player, run towards it
 	private void moveToPlayer(Vector3 player) {
+
+		RaycastHit2D rch2d = Physics2D.Raycast(transform.position, transform.up, arrivalDistance * 4f);
+		if (rch2d.collider != null) {
+			if (rch2d.collider.tag == "door") {
+				return; //don't move
+			}
+		}
+
 		Vector3 moveVector = player - transform.position;
 		moveVector.Normalize();
 		transform.position += moveVector * chaseSpeed * Time.deltaTime;
