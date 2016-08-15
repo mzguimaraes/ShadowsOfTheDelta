@@ -99,22 +99,30 @@ public class ExitDoorBrett : MonoBehaviour {
 
 
 		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f && playerOne.activeInHierarchy)  { // If player one is within a few feet of the exit door, show him the following text.
-			playerOneInstruction.text = "Press [RIGHT SHIFT] to escape!";
 			playerOnePanel.SetActive (true);
-			if (Input.GetKeyDown(KeyCode.RightShift)) { // If he presses right shift,
-				playerOne.SetActive(false); // Disable his character from the scene.
-				EndGame();
+			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
+				playerOneInstruction.text = "Wait for your partner to catch up!";
 			}
-				
+			else {
+				playerOneInstruction.text = "Press [RIGHT SHIFT] to escape!";
+				if (Input.GetKeyDown(KeyCode.RightShift)) { // If he presses right shift,
+					playerOne.SetActive(false); // Disable his character from the scene.
+					EndGame();
+				}
+			}
 		}
 
 		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f && playerTwo.activeInHierarchy)  { // If player two is within a few feet of the exit door, show him the following text.
-			playerTwoInstruction.text = "Press [SPACE] to escape!";
 			playerTwoPanel.SetActive (true);
-			if (Input.GetKeyDown(KeyCode.Space)) { // If he presses space,
-				playerTwo.SetActive(false); // Disable his character from the scene.
-				EndGame();
-
+			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
+				playerTwoInstruction.text = "Wait for your partner to catch up!";
+			}
+			else {
+				playerTwoInstruction.text = "Press [SPACE] to escape!";
+				if (Input.GetKeyDown(KeyCode.Space)) { // If he presses space,
+					playerTwo.SetActive(false); // Disable his character from the scene.
+					EndGame();
+				}
 			}
 		}
 

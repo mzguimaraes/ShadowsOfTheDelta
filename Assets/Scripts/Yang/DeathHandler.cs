@@ -44,12 +44,14 @@ public class DeathHandler : MonoBehaviour {
 			return;
 		}
 
-		// one player is killed if this function is called
-		dead_player_count += 1;
-		if(dead_player_count == player_count){
-			// if all players are killer, call AfterDeath()
-			AfterDeath ();
-		}
+		//because we want to restart the game when someone dies
+		Invoke("loadNextScene", 1.5f);
+//		// one player is killed if this function is called
+//		dead_player_count += 1;
+//		if(dead_player_count == player_count){
+//			// if all players are killer, call AfterDeath()
+//			AfterDeath ();
+//		}
 
 	}
 
