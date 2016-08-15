@@ -39,6 +39,7 @@ public class ExitDoorBrett : MonoBehaviour {
 	// Setting up AudioSources to be triggered when players perform certain actions
 	public AudioSource ExitDoorSource;
 	public AudioClip exitDoorOpenSFX;
+	public AudioSource LevelBGM;
 
 	float textTimeEnd = 1000;  // This variable tracks how long it takes for the "Completed Level Screen" to load.
 
@@ -54,7 +55,7 @@ public class ExitDoorBrett : MonoBehaviour {
 
 	void EndGame () {
 		//TODO: figure out intended behavior and use that
-		ExitDoorSource.PlayOneShot (exitDoorOpenSFX); // Play the SFX of the door opening.
+		// Play the SFX of the door opening.
 		escaped_player_count++;
 
 //		if (hasPlayerEscaped == false && deathHandler.Dead_player_count == 0) { // If no one else has escaped...
@@ -77,6 +78,8 @@ public class ExitDoorBrett : MonoBehaviour {
 //		}
 
 		if(deathHandler.Dead_player_count + escaped_player_count == deathHandler.Player_count){
+			LevelBGM.Stop ();
+			ExitDoorSource.PlayOneShot (exitDoorOpenSFX);
 			breakoutPanel.SetActive(true);
 			// wait 2 seconds before loading the next scene
 			Invoke("loadNextScene", 2f);
