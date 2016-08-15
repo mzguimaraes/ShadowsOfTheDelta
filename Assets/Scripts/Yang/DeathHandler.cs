@@ -11,6 +11,11 @@ using UnityEngine.SceneManagement;		// for SceneManager
 public class DeathHandler : MonoBehaviour {
 
 	int player_count;
+	public int Player_count{
+		get {
+			return player_count;
+		}
+	}
 	private int dead_player_count;
 	public int Dead_player_count {
 		get {
@@ -39,12 +44,14 @@ public class DeathHandler : MonoBehaviour {
 			return;
 		}
 
-		// one player is killed if this function is called
-		dead_player_count += 1;
-		if(dead_player_count == player_count){
-			// if all players are killer, call AfterDeath()
-			AfterDeath ();
-		}
+		//because we want to restart the game when someone dies
+		Invoke("loadNextScene", 1.5f);
+//		// one player is killed if this function is called
+//		dead_player_count += 1;
+//		if(dead_player_count == player_count){
+//			// if all players are killer, call AfterDeath()
+//			AfterDeath ();
+//		}
 
 	}
 

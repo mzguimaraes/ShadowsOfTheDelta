@@ -16,8 +16,15 @@ public class PlayerStatus : MonoBehaviour {
 	bool isDead = false;
 	Rigidbody2D playerRigidbody;
 
+	// variables for processing sounds:
+	public AudioClip playerDeathSound;
+	AudioSource audioSource;
+
 	void Start(){
 		playerRigidbody = GetComponent<Rigidbody2D> ();
+		// create an audio source component once
+		audioSource = gameObject.AddComponent<AudioSource> ();
+		audioSource.playOnAwake = false;
 	}
 
 	// call this function if you want to know whether this player is dead
@@ -78,6 +85,12 @@ public class PlayerStatus : MonoBehaviour {
 			foreach(Collider2D collider in colliders){
 				collider.enabled = false;
 			}
+		}
+
+
+		// player the PlayerDeath sound
+		if(playerDeathSound != null){
+			audioSource.PlayOneShot (playerDeathSound);
 		}
 
 
