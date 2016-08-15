@@ -101,7 +101,10 @@ public class ExitDoorBrett : MonoBehaviour {
 		textTimeEnd -= Time.deltaTime; // Countdown from the timer.
 
 
-		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f && playerOne.activeInHierarchy)  { // If player one is within a few feet of the exit door, show him the following text.
+		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f && playerOne.activeInHierarchy
+			 && playerOne.GetComponent<PlayerStatus>().IsDead() == false)  { 
+			// If player one is within a few feet of the exit door, show him the following text.
+			// Added death check to prevent player from escaping after captured
 			playerOnePanel.SetActive (true);
 			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
 				playerOneInstruction.text = "Wait for your partner to catch up!";
@@ -115,7 +118,10 @@ public class ExitDoorBrett : MonoBehaviour {
 			}
 		}
 
-		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f && playerTwo.activeInHierarchy)  { // If player two is within a few feet of the exit door, show him the following text.
+		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f && playerTwo.activeInHierarchy
+			 && playerTwo.GetComponent<PlayerStatus>().IsDead() == false)  { 
+			// If player two is within a few feet of the exit door, show him the following text.
+			// Added death check to prevent player from escaping after captured
 			playerTwoPanel.SetActive (true);
 			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
 				playerTwoInstruction.text = "Wait for your partner to catch up!";
