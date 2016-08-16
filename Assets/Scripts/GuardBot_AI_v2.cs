@@ -42,6 +42,10 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 	private float canMoveRetryTimerMax = 1f;
 	private float canMoveRetryTimer = 1f;
 
+	//dirty hack time
+	public bool isGuarding = false; //to fix that one weird bug in level 4
+	public Transform locationGuarding;
+
 	private void returnToPatrol() {
 		//if patrolDestination in sight, move there
 		RaycastHit2D lookToPatrol = Physics2D.Raycast(transform.position, 
@@ -250,6 +254,10 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 		if (patrol.path[0] != null)
 			transform.position = patrol.path[0].transform.position;
 
+		if (isGuarding) {
+			transform.LookAt(locationGuarding);
+		}
+
 		//myRb2d = GetComponent<Rigidbody2D>();
 		audioSource = GetComponent<AudioSource>();
 	}
@@ -272,9 +280,16 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				returnToPatrol();
 			}
 			else if (player == null) { //no player -- normal patrol
-				checkPatrol();
-				rotateTowards(patrolDestination.position);
-				moveAlongPatrolPath();
+				if (isGuarding && patrol.path.Count <= 1) {
+					//guard door
+					rotateTowards(locationGuarding.position);
+				}
+				else {
+					checkPatrol();
+					rotateTowards(patrolDestination.position);
+					moveAlongPatrolPath();
+				}
+
 			}
 			else { //sees player and will chase
 				isChasing = true;
@@ -300,6 +315,7 @@ public class GuardBot_AI_v2 : MonoBehaviour {
 				}
 			}	
 		}
+
 	}
 
 //	void FixedUpdate() {
