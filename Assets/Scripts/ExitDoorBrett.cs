@@ -39,6 +39,7 @@ public class ExitDoorBrett : MonoBehaviour {
 	// Setting up AudioSources to be triggered when players perform certain actions
 	public AudioSource ExitDoorSource;
 	public AudioClip exitDoorOpenSFX;
+	public AudioSource LevelBGM;
 
 	float textTimeEnd = 1000;  // This variable tracks how long it takes for the "Completed Level Screen" to load.
 
@@ -54,7 +55,7 @@ public class ExitDoorBrett : MonoBehaviour {
 
 	void EndGame () {
 		//TODO: figure out intended behavior and use that
-		ExitDoorSource.PlayOneShot (exitDoorOpenSFX); // Play the SFX of the door opening.
+		// Play the SFX of the door opening.
 		escaped_player_count++;
 
 //		if (hasPlayerEscaped == false && deathHandler.Dead_player_count == 0) { // If no one else has escaped...
@@ -77,6 +78,8 @@ public class ExitDoorBrett : MonoBehaviour {
 //		}
 
 		if(deathHandler.Dead_player_count + escaped_player_count == deathHandler.Player_count){
+			LevelBGM.Stop ();
+			ExitDoorSource.PlayOneShot (exitDoorOpenSFX);
 			breakoutPanel.SetActive(true);
 			// wait 2 seconds before loading the next scene
 			Invoke("loadNextScene", 2f);
@@ -98,7 +101,10 @@ public class ExitDoorBrett : MonoBehaviour {
 		textTimeEnd -= Time.deltaTime; // Countdown from the timer.
 
 
-		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f && playerOne.activeInHierarchy)  { // If player one is within a few feet of the exit door, show him the following text.
+		if ((exitDoor.position - playerOne.transform.position).magnitude < 2.5f && playerOne.activeInHierarchy
+			 && playerOne.GetComponent<PlayerStatus>().IsDead() == false)  { 
+			// If player one is within a few feet of the exit door, show him the following text.
+			// Added death check to prevent player from escaping after captured
 			playerOnePanel.SetActive (true);
 			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
 				playerOneInstruction.text = "Wait for your partner to catch up!";
@@ -112,7 +118,10 @@ public class ExitDoorBrett : MonoBehaviour {
 			}
 		}
 
-		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f && playerTwo.activeInHierarchy)  { // If player two is within a few feet of the exit door, show him the following text.
+		if ((exitDoor.position - playerTwo.transform.position).magnitude < 2.5f && playerTwo.activeInHierarchy
+			 && playerTwo.GetComponent<PlayerStatus>().IsDead() == false)  { 
+			// If player two is within a few feet of the exit door, show him the following text.
+			// Added death check to prevent player from escaping after captured
 			playerTwoPanel.SetActive (true);
 			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
 				playerTwoInstruction.text = "Wait for your partner to catch up!";
