@@ -123,7 +123,7 @@ public class ExitDoorBrett : MonoBehaviour {
 			// If player two is within a few feet of the exit door, show him the following text.
 			// Added death check to prevent player from escaping after captured
 			playerTwoPanel.SetActive (true);
-			if ((exitDoor.position - playerTwo.transform.position).magnitude >= 2.5f) {
+			if ((exitDoor.position - playerOne.transform.position).magnitude >= 2.5f) {
 				playerTwoInstruction.text = "Wait for your partner to catch up!";
 			}
 			else {
